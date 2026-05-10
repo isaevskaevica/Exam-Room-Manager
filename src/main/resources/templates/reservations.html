@@ -40,12 +40,12 @@
 <p th:if="${#lists.isEmpty(reservations)}">No reservations found.</p>
 
 <form style="padding-bottom: 15px" th:action="@{/reservations}" method="get">
-    <select style="width: 595px; height: 40px" name="subjectId">
+    <select style="width: 595px; height: 40px" name="subjectName">
         <option value="">All Subjects</option>
         <option th:each="subject : ${subjects}"
-                th:value="${subject.id}"
+                th:value="${subject.name}"
                 th:text="${subject.name}"
-                th:selected="${subject.id == selectedSubjectId}">
+                th:selected="${subject.name == selectedSubjectName}">
         </option>
     </select>
     <button style="width: 200px; height: 40px" type="submit">Filter</button>

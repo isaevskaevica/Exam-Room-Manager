@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.wp.exam_room_manager.model.Professor;
 import mk.ukim.finki.wp.exam_room_manager.model.Reservation;
 import mk.ukim.finki.wp.exam_room_manager.model.Subject;
+import mk.ukim.finki.wp.exam_room_manager.repository.SubjectRepository;
 import mk.ukim.finki.wp.exam_room_manager.service.ClassroomService;
 import mk.ukim.finki.wp.exam_room_manager.service.ProfessorService;
 import mk.ukim.finki.wp.exam_room_manager.service.ReservationService;
-import mk.ukim.finki.wp.exam_room_manager.service.SubjectService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalTime;
 import java.util.List;
 
@@ -26,28 +25,35 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final ClassroomService classroomService;
     private final ProfessorService professorService;
-    private final SubjectService subjectService;
+    private final SubjectRepository subjectRepository;
 
     @GetMapping
-    public String listReservations(@RequestParam(required = false) Long subjectId,
+    public String listReservations(@RequestParam(required = false) String subjectName,
                                    Model model,
                                    @AuthenticationPrincipal UserDetails userDetails) {
-
         Professor professor = professorService.findByUsername(userDetails.getUsername());
-        List<Subject> subjects = subjectService.findByProfessor(professor);
+
+        List<String> distinctNames = subjectRepository.findDistinctNames();
+        List<Subject> subjects = distinctNames.stream()
+                .map(name -> subjectRepository.findAll()
+                        .stream()
+                        .filter(s -> s.getName().equals(name))
+                        .findFirst()
+                        .orElseThrow())
+                .toList();
 
         List<Reservation> reservations;
 
-        if (subjectId != null)
+        if (subjectName == null || subjectName.isEmpty())
         {
-            reservations = reservationService.findAllBySubjectId(subjectId);
+            reservations = reservationService.findAll();
         }
         else
-            reservations = reservationService.findAll();
+            reservations = reservationService.findAllBySubjectName(subjectName);
 
         model.addAttribute("reservations", reservations);
         model.addAttribute("subjects", subjects);
-        model.addAttribute("selectedSubjectId", subjectId);
+        model.addAttribute("selectedSubjectName", subjectName);
         model.addAttribute("loggedInProfessor", professor);
         return "reservations";
     }

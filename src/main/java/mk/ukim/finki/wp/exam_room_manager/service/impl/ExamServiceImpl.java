@@ -8,7 +8,6 @@ import mk.ukim.finki.wp.exam_room_manager.service.ExamService;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +21,4 @@ public class ExamServiceImpl implements ExamService {
         return examRepository.save(exam);
     }
 
-    @Override
-    public List<Exam> findAllBySubject(Subject subject) {
-        return examRepository.findAllBySubject(subject);
-    }
 }

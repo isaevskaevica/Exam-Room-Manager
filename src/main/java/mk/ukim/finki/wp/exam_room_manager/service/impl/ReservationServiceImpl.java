@@ -55,10 +55,9 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.saveAll(reservations);
     }
 
-    @Override
-    public List<Reservation> findAllBySubjectId(Long subjectId) {
+    public List<Reservation> findAllBySubjectName(String subjectName) {
         return reservationRepository.findAll().stream()
-                .filter(r -> r.getExam().getSubject().getId().equals(subjectId))
+                .filter(r -> r.getExam().getSubject().getName().equals(subjectName))
                 .toList();
     }
 
