@@ -84,7 +84,7 @@ mk.ukim.finki.wp.exam_room_manager
 
 ---
 
-### Project Setup
+## Project Setup
 
 **1. Clone the repository**
 ```bash
@@ -119,33 +119,37 @@ mvn spring-boot:run
 ```
 http://localhost:8080/login
 ```
+
 ---
 
-### Prediction Model Setup
+## Prediction Model Setup
 
 **1. Navigate to the ml/ folder**
-```
+```bash
 cd ml/
 ```
 
 **2. Install dependencies**
-```
+```bash
 pip install fastapi uvicorn scikit-learn pandas joblib jupyter
 ```
 
 **3. Train the model (run all cells in the notebook)**
-```
+```bash
 jupyter notebook attendance_prediction.ipynb
 ```
 
 **4. Start the FastAPI server**
-```
+```bash
 python main.py
 ```
 
-The ML service runs on **http://localhost:8000**
+**5. The ML service runs on:**
+```
+http://localhost:8080
+```
 
-### Usage
+## Usage
 On the exam options page, enter the number of students and click **Predict Attendance** to get a prediction of how many students will actually show up.
 
 **The FastAPI server must be running alongside the Spring Boot application for the prediction feature to work.**
