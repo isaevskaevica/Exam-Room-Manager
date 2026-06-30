@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,10 +96,25 @@ public class ExamController {
 
         Subject subject = subjectService.findById(subjectId);
 
-        List<Reservation> reservations = classroomIds.stream().map(id -> {
+        List<Classroom> selectedClassrooms = classroomIds.stream()
+                .map(classroomService::findById)
+                .sorted(Comparator.comparing(Classroom::getCapacity).reversed())
+                .toList();
+
+        List<Reservation> reservations = new ArrayList<>();
+
+        int remainingStudents = numberOfStudents;
+
+        for (Classroom classroom : selectedClassrooms){
+            int assignedStudents = Math.min(remainingStudents, classroom.getCapacity());
             Exam exam = examService.createExam(date, startTime, duration, numberOfStudents, subject);
-            return new Reservation(classroomService.findById(id), exam);
-        }).toList();
+            reservations.add(new Reservation(classroom, exam, assignedStudents));
+            remainingStudents -= assignedStudents;
+
+            if (remainingStudents <= 0){
+                break;
+            }
+        }
 
         reservationService.saveAll(reservations);
         return "redirect:/reservations";

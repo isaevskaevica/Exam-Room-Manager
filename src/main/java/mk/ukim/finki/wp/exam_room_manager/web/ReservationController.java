@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -29,8 +31,10 @@ public class ReservationController {
 
     @GetMapping
     public String listReservations(@RequestParam(required = false) String subjectName,
-                                   Model model,
-                                   @AuthenticationPrincipal UserDetails userDetails) {
+                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate examDate,
+                                   @RequestParam(required = false, defaultValue = "mine") String scope,
+                                   @AuthenticationPrincipal UserDetails userDetails,
+                                   Model model) {
         Professor professor = professorService.findByUsername(userDetails.getUsername());
 
         List<String> distinctNames = subjectRepository.findDistinctNames();
@@ -51,9 +55,23 @@ public class ReservationController {
         else
             reservations = reservationService.findAllBySubjectName(subjectName);
 
+        if (examDate != null){
+            reservations = reservations.stream()
+                    .filter(reservation -> reservation.getExam().getExamDate().equals(examDate))
+                    .toList();
+        }
+
+        if (!"all".equals(scope)){
+            reservations = reservations.stream()
+                    .filter(reservation -> reservation.getExam().getSubject().getProfessor().getId().equals(professor.getId()))
+                    .toList();
+        }
+
         model.addAttribute("reservations", reservations);
         model.addAttribute("subjects", subjects);
         model.addAttribute("selectedSubjectName", subjectName);
+        model.addAttribute("selectedDate", examDate);
+        model.addAttribute("selectedScope", scope);
         model.addAttribute("loggedInProfessor", professor);
         return "reservations";
     }

@@ -24,8 +24,17 @@ public class Reservation {
     @JoinColumn(name = "exam_id")
     private Exam exam;
 
+    @Column(name = "students_assigned")
+    private int studentsAssigned;
+
     public Reservation(Classroom classroom, Exam exam) {
         this.classroom = classroom;
         this.exam = exam;
+    }
+
+    public Reservation(Classroom classroom, Exam exam, int studentsAssigned) {
+        this.classroom = classroom;
+        this.exam = exam;
+        this.studentsAssigned = studentsAssigned;
     }
 }

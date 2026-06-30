@@ -33,5 +33,6 @@ CREATE TABLE exams (
 CREATE TABLE reservations (
     id BIGSERIAL PRIMARY KEY,
     classroom_id BIGINT REFERENCES classrooms(id),
-    exam_id BIGINT REFERENCES exams(id)
+    exam_id BIGINT REFERENCES exams(id),
+    students_assigned INT NOT NULL
 );

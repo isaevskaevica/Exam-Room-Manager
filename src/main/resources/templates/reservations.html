@@ -48,6 +48,12 @@
                 th:selected="${subject.name == selectedSubjectName}">
         </option>
     </select>
+    <input style="height: 36px" type="date" name="examDate"
+           th:value="${selectedDate != null ? selectedDate : T(java.time.LocalDate).now()}" />
+    <select style="height: 40px" name="scope">
+        <option value="mine" th:selected="${selectedScope == 'mine'}">My reservations</option>
+        <option value="all" th:selected="${selectedScope == 'all'}">All professors</option>
+    </select>
     <button style="width: 200px; height: 40px" type="submit">Filter</button>
 </form>
 
@@ -60,8 +66,8 @@
         <strong th:text="${#temporals.format(reservation.exam.examDate, 'MMMM yyyy')}"></strong>
     </p>
     <p>🕐 Start time: <strong th:text="${reservation.exam.startTime}"></strong></p>
-    <p>⏱ Duration:<strong th:text="${reservation.exam.duration / 60 > 0 ? reservation.exam.duration / 60 + 'h ' : ''} + ${reservation.exam.duration % 60 > 0 ? reservation.exam.duration % 60 + 'min' : ''}"></strong></p>
-    <p>👥 Students: <strong th:text="${reservation.classroom.capacity + ' / ' + reservation.exam.numberOfStudents}"></strong></p>
+    <p>⏱  Duration:<strong th:text="${reservation.exam.duration / 60 > 0 ? reservation.exam.duration / 60 + 'h ' : ''} + ${reservation.exam.duration % 60 > 0 ? reservation.exam.duration % 60 + 'min' : ''}"></strong></p>
+    <p>👥 Students: <strong th:text="${reservation.studentsAssigned + ' / ' + reservation.classroom.capacity}"></strong></p>
     <p>🏫 Classroom: <strong th:text="${reservation.classroom.name}"></strong></p>
     <p>👤 Reserved by: <strong th:text="${reservation.exam.subject.professor.fullName}"></strong></p>
 

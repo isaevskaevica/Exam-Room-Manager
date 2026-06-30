@@ -1,7 +1,7 @@
 INSERT INTO professors (username, password, full_name, email, professor_role)
 VALUES ('aleksandra_dedinec', 'aleksandra_dedinec', 'Александра Дединец', 'aleksandra.dedinec@finki.ukim.mk', 'ROLE_PROFESSOR'),
        ('aleksandra_popovska_mitrovikj', 'aleksandra_popovska_mitrovikj', 'Александра Поповска Митровиќ', 'aleksandra.popovska.mitrovikj@finki.ukim.mk', 'ROLE_PROFESSOR'),
-       ('ana_magdevska_bogdanova', 'ana_magdevska_bogdanova', 'Ана Мадевска Богданова', 'ana.magdevska.bogdanova@finki.ukim.mk', 'ROLE_PROFESSOR'),
+       ('ana_madevska_bogdanova', 'ana_madevska_bogdanova', 'Ана Мадевска Богданова', 'ana.madevska.bogdanova@finki.ukim.mk', 'ROLE_PROFESSOR'),
        ('anastas_mishev', 'anastas_mishev', 'Анастас Мишев', 'anastas.mishev@finki.ukim.mk', 'ROLE_PROFESSOR'),
        ('andrea_kulakov', 'andrea_kulakov', 'Андреа Кулаков', 'andrea.kulakov@finki.ukim.mk', 'ROLE_PROFESSOR'),
        ('andreja_naumoski', 'andreja_naumoski', 'Андреја Наумоски', 'andreja.naumoski@finki.ukim.mk', 'ROLE_PROFESSOR'),
