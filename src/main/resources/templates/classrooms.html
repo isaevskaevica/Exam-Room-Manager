@@ -1,139 +1,86 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Select Classrooms</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Избери простории</title>
 </head>
-
-<style>
-    body {
-        font-family: sans-serif;
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-    h1 { margin-bottom: 4px; }
-    h2 { color: #444; margin-bottom: 8px; }
-
-    .date_display { font-weight: bold; }
-
-    form { margin: 16px 0; }
-
-    select, input[type="time"], input[type="number"] {
-        padding: 6px 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 14px;
-        margin-right: 6px;
-    }
-
-    button {
-        padding: 7px 16px;
-        background: #2a52be;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-    }
-    button:hover { background: #1e3fa0; }
-
-    label {
-        display: block;
-        margin: 10px 0 4px;
-        font-size: 14px;
-        font-weight: 500;
-    }
-    label input, label select { display: inline; }
-
-    .classroom {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 15px;
-        border-radius: 6px;
-    }
-    .classroom.unavailable {
-        background: #dce8ff;
-        opacity: 0.6;
-    }
-    .classroom input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        accent-color: #2a52be;
-    }
-    .unavailable-label {
-        color: #1a3a8f;
-        font-size: 12px;
-        font-weight: 600;
-        margin-left: 8px;
-    }
-
-    a { color: #2a52be; font-size: 14px; }
-</style>
-
 <body>
 
-<h1>Available Classrooms</h1>
-<h2 th:text="${subject.name}"></h2>
-<p>
-    Date:
-    <span class="date_display" th:text="${#temporals.day(date)}"></span><span
-        class="date_display"
-        th:text="${#temporals.day(date) == 1 || #temporals.day(date) == 21 || #temporals.day(date) == 31 ? 'st' :
-                 (#temporals.day(date) == 2 || #temporals.day(date) == 22 ? 'nd' :
-                 (#temporals.day(date) == 3 || #temporals.day(date) == 23 ? 'rd' : 'th'))}">
-</span>
-    <span class="date_display" th:text="${#temporals.format(date, 'MMMM yyyy')}"></span>
-</p>
+<header class="dashboard-header">
+    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <div class="dashboard-header-actions">
+        <a class="btn-reservations" th:href="@{/dashboard}">← Dashboard</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-logout" type="submit">Одјава</button>
+        </form>
+    </div>
+</header>
 
-<form th:action="@{/exam/classrooms}" method="get">
-    <input type="hidden" name="subjectId" th:value="${subject.id}"/>
-    <input type="hidden" name="date" th:value="${date}"/>
-    <input type="hidden" name="startTime" th:value="${startTime}"/>
-    <input type="hidden" name="duration" th:value="${duration}"/>
-    <input type="hidden" name="numberOfStudents" th:value="${numberOfStudents}"/>
-    <input type="hidden" name="examType" th:value="${examType}"/>
+<div class="dashboard-content">
 
-    <select name="computerAvailability">
-        <option value="">All Classrooms</option>
-        <option th:each="ca : ${computerAvailabilities}"
-                th:value="${ca}"
-                th:text="${ca}"
-                th:selected="${ca == selectedFilter}">
-        </option>
-    </select>
-    <button type="submit">Filter</button>
-</form>
+    <div class="classrooms-top">
+        <div>
+            <h2 class="options-title" th:text="${subject.name}"></h2>
+            <p class="classrooms-meta">
+                <span th:text="${date}"></span> •
+                <span th:text="${startTime}"></span> •
+                <span th:text="${duration}"></span> мин •
+                <span th:text="${numberOfStudents}"></span> студенти
+            </p>
+        </div>
 
-<p th:if="${error}" th:text="${error}" style="color:red;"></p>
-
-<form th:action="@{/exam/reservations}" method="post">
-    <input type="hidden" name="subjectId" th:value="${subject.id}"/>
-    <input type="hidden" name="date" th:value="${date}"/>
-    <input type="hidden" name="startTime" th:value="${startTime}"/>
-    <input type="hidden" name="duration" th:value="${duration}"/>
-    <input type="hidden" name="numberOfStudents" th:value="${numberOfStudents}"/>
-    <input type="hidden" name="examType" th:value="${examType}"/>
-
-    <div th:each="classroom : ${classrooms}" th:class="${unavailableIds.contains(classroom.id)} ? 'classroom unavailable' : 'classroom'">
-
-        <input type="checkbox" name="classroomIds" th:value="${classroom.id}" th:disabled="${unavailableIds.contains(classroom.id)}"/>
-
-        <strong th:text="${classroom.name}"></strong> - Capacity: <span th:text="${classroom.capacity}"></span>
-
-        <span th:text="${classroom.computerAvailability}" style="color:#888; font-size:13px;"></span>
-
-        <span th:if="${unavailableIds.contains(classroom.id)}" class="unavailable-label">UNAVAILABLE</span>
-
+        <form th:action="@{/exam/classrooms}" method="get" class="filter-form">
+            <input type="hidden" name="subjectId" th:value="${subject.id}"/>
+            <input type="hidden" name="date" th:value="${date}"/>
+            <input type="hidden" name="startTime" th:value="${startTime}"/>
+            <input type="hidden" name="duration" th:value="${duration}"/>
+            <input type="hidden" name="numberOfStudents" th:value="${numberOfStudents}"/>
+            <select name="computerAvailability" class="filter-select" onchange="this.form.submit()">
+                <option value="">Сите сали</option>
+                <option th:each="ca : ${computerAvailabilities}"
+                        th:value="${ca}"
+                        th:text="${ca}"
+                        th:selected="${ca == selectedFilter}">
+                </option>
+            </select>
+        </form>
     </div>
 
-    <button type="submit" style="margin-top: 16px;">Reserve</button>
-</form>
+    <p th:if="${error}" class="classrooms-error" th:text="${error}"></p>
 
-<a style="text-decoration: none" th:href="@{/dashboard}">← Back to Dashboard</a>
+    <form th:action="@{/exam/reservations}" method="post">
+        <input type="hidden" name="subjectId" th:value="${subject.id}"/>
+        <input type="hidden" name="date" th:value="${date}"/>
+        <input type="hidden" name="startTime" th:value="${startTime}"/>
+        <input type="hidden" name="duration" th:value="${duration}"/>
+        <input type="hidden" name="numberOfStudents" th:value="${numberOfStudents}"/>
+
+        <div class="classrooms-grid">
+            <label th:each="classroom : ${classrooms}"
+                   th:classappend="${unavailableIds.contains(classroom.id)} ? ' unavailable' : ''"
+                   class="classroom-card">
+                <input type="checkbox"
+                       name="classroomIds"
+                       th:value="${classroom.id}"
+                       th:disabled="${unavailableIds.contains(classroom.id)}"/>
+                <div class="classroom-info">
+                    <span class="classroom-name" th:text="${classroom.name}"></span>
+                    <span class="classroom-details">
+                        Капацитет: <span th:text="${classroom.capacity}"></span> •
+                        <span th:text="${classroom.computerAvailability}"></span>
+                    </span>
+                </div>
+                <span th:if="${unavailableIds.contains(classroom.id)}" class="unavailable-badge">Зафатена</span>
+            </label>
+        </div>
+
+        <button class="btn-submit" type="submit" style="max-width: 480px; margin: 20px auto; display: block;">
+            Резервирај →
+        </button>
+    </form>
+
+</div>
 
 </body>
 </html>

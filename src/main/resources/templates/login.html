@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<head >
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Login Page</title>
 </head>
-<body>
+<body class="login-page">
 
-<form th:action="@{/login}" method="post">
 
-    <div style="display: flex; flex-direction: column; width: 300px; border-radius: 20px">
 
-        <label style="padding: 10px;" for="username">Username: <input id="username" type="text" name="username" placeholder="Username"/></label>
+    <form th:action="@{/login}" method="post" class="login-card">
 
-        <label style="padding: 10px;" for="password">Password: <input id="password" type="password" name="password" placeholder="Password"/></label>
+        <img src="/images/finki_logo.png" alt="FINKI Logo" class="login-logo">
 
-        <button style="margin: 10px; width: 200px" type="submit">Login</button>
+<!--        <h1 class="login-title">Најава</h1>-->
 
-    </div>
+        <label class="field-label" for="username">Email адреса</label>
+            <input id="username" type="text" name="username" placeholder="profesor@finki.ukim.mk" class="field-input"/>
 
-    <p th:if="${param.error}">Invalid username or password.</p>
+        <label class="field-label" for="password">Лозинка</label>
+            <input id="password" type="password" name="password" placeholder="--------" class="field-input"/>
 
-</form>
+        <button class="login-btn" type="submit">Најава</button>
+
+        <a href="#" class="forgot-link">Заборавена лозинка?</a>
+
+        <p th:if="${param.error}" class="error-msg">Невалидно корисничко име или лозинка.</p>
+
+        <p class="login-footer">© 2026 ФИНКИ – Универзитет „Св. Кирил и Методиј"</p>
+    </form>
+
+
+
 
 </body>
 </html>

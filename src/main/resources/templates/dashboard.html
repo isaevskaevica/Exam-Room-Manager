@@ -1,46 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Dashboard</title>
 </head>
 <body>
 
-<div style="display: flex">
-    <h1 style="padding-right: 130px">Welcome, <span th:text="${professor.getFullName()}"></span></h1>
-
-    <div style="display: flex; justify-content: center; align-items: center">
-
-        <form th:action="@{/logout}" method="post">
-
-            <button style="margin: 10px; width: 200px" type="submit">Logout</button>
-
-        </form>
-
+<header class="dashboard-header">
+    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <div class="dashboard-header-actions">
         <form th:action="@{/reservations}" method="get">
-
-            <button style="margin: 10px; width: 200px" type="submit">Reservations</button>
-
+            <button class="btn-reservations" type="submit">Резервации</button>
         </form>
-
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-logout" type="submit">Одјава</button>
+        </form>
     </div>
+</header>
+
+<div class="dashboard-welcome-banner">
+    <span>Добродојдовте, <span th:text="${professor.getFullName()}"></span>!</span>
 </div>
 
-<h2>Your Subjects</h2>
+<div class="dashboard-content">
+    <h2 class="dashboard-section-title">Ваши предмети</h2>
 
-<p th:if="${#lists.isEmpty(subjects)}">You have no subjects assigned.</p>
+    <p th:if="${#lists.isEmpty(subjects)}" class="dashboard-empty">Немате доделено предмети.</p>
 
-<div th:each="subject : ${subjects}">
-
-    <a style="text-decoration: none;" th:href="@{/exam/options(subjectId=${subject.id})}">
-
-        <div>
-
-            <h3 th:text="${subject.name} + ' - ' + ${subject.code}"></h3>
-
-        </div>
-
-    </a>
-
+    <div class="subjects-grid">
+        <a th:each="subject : ${subjects}"
+           th:href="@{/exam/options(subjectId=${subject.id})}"
+           class="subject-card">
+            <span class="subject-name" th:text="${subject.name}"></span>
+            <span class="subject-code" th:text="${subject.code}"></span>
+        </a>
+    </div>
 </div>
 
 </body>

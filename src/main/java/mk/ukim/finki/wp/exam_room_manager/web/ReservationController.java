@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -103,6 +105,7 @@ public class ReservationController {
 
         model.addAttribute("reservation", reservation);
         model.addAttribute("classrooms", classroomService.findAll());
+        model.addAttribute("loggedInProfessor", loggedIn);
         return "edit-reservation";
     }
 
@@ -115,4 +118,38 @@ public class ReservationController {
         reservationService.update(id, startTime, duration, numberOfStudents, classroomId);
         return "redirect:/reservations";
     }
+
+
+
+    @GetMapping("/api")
+    @ResponseBody
+    public List<Map<String, Object>> getReservationsApi(
+            @RequestParam(required = false) String subjectName,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        Professor professor = professorService.findByUsername(userDetails.getUsername());
+
+        List<Reservation> reservations;
+        if (subjectName == null || subjectName.isEmpty()) {
+            reservations = reservationService.findAll();
+        } else {
+            reservations = reservationService.findAllBySubjectName(subjectName);
+        }
+
+        return reservations.stream().map(r -> {
+            Map<String, Object> event = new HashMap<>();
+            event.put("id", r.getId());
+            event.put("title", r.getExam().getSubject().getName());
+            event.put("start", r.getExam().getExamDate().toString());
+            event.put("extendedProps", Map.of(
+                    "classroom", r.getClassroom().getName(),
+                    "startTime", r.getExam().getStartTime().toString(),
+                    "duration", r.getExam().getDuration(),
+                    "professor", r.getExam().getSubject().getProfessor().getFullName(),
+                    "professorId", r.getExam().getSubject().getProfessor().getId()
+            ));
+            return event;
+        }).toList();
+    }
+
 }

@@ -1,258 +1,106 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Exam Options</title>
-    <style>
-        body { font-family: sans-serif; max-width: 520px; margin: 40px auto; padding: 0 20px; }
-        h2 { color: #444; margin-bottom: 4px; }
-
-        .calendar {
-            display: inline-block;
-            border: 1px solid #ccc;
-            padding: 16px;
-            border-radius: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 16px;
-        }
-        .cal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .cal-header button {
-            background: none;
-            border: 1px solid #ccc;
-            padding: 4px 12px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 18px;
-        }
-        .cal-header button:hover { background: #f0f0f0; }
-        #monthLabel { font-weight: 600; font-size: 16px; }
-        .cal-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-        }
-        .cal-day-name {
-            text-align: center;
-            font-weight: 600;
-            font-size: 12px;
-            color: #666;
-            padding: 6px 0;
-        }
-        .cal-day {
-            text-align: center;
-            padding: 8px 4px;
-            cursor: pointer;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            font-size: 14px;
-        }
-        .cal-day:hover { background: #e8edf9; }
-        .cal-day.selected { background: #2a52be; color: white; }
-        .cal-day.disabled { color: #ccc; cursor: default; pointer-events: none; }
-        .cal-day.empty { border: none; cursor: default; pointer-events: none; }
-        .cal-day.today { border-color: #2a52be; font-weight: 600; }
-
-        .selected-date { font-size: 13px; color: #444; margin-bottom: 16px; }
-        .selected-date strong { color: #2a52be; }
-
-        label { display: block; margin: 12px 0 4px; font-size: 14px; font-weight: 500; }
-        input, select {
-            width: 100%; padding: 8px 10px;
-            border: 1px solid #ccc; border-radius: 6px;
-            font-size: 14px; box-sizing: border-box;
-        }
-        button[type="submit"] {
-            margin-top: 20px; width: 100%; padding: 10px;
-            background: #2a52be; color: white;
-            border: none; border-radius: 6px;
-            font-size: 15px; cursor: pointer;
-        }
-        button[type="submit"]:hover { background: #1e3fa0; }
-        button[type="submit"]:disabled { background: #aab4d4; cursor: not-allowed; }
-        a { color: #2a52be; font-size: 13px; display: inline-block; margin-top: 16px; }
-
-        .predict-row { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
-        .predict-row input[type="number"] { flex: 1; margin: 0; }
-        #predictBtn {
-            flex-shrink: 0; padding: 8px 14px;
-            background: #f0f4ff; color: #2a52be;
-            border: 1.5px solid #2a52be; border-radius: 6px;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-        }
-        #predictionResult {
-            display: none; margin-top: 8px; padding: 10px 14px;
-            background: #eef2ff; border-left: 3px solid #2a52be;
-            border-radius: 0 6px 6px 0; font-size: 13px;
-        }
-        #predictionResult.error { background: #fff0f0; border-color: #c0392b; color: #c0392b; }
-    </style>
 </head>
 <body>
 
-<h1>Exam Details</h1>
-<h2 th:text="${subject.name}"></h2>
-
-<form th:action="@{/exam/classrooms}" method="get">
-    <input type="hidden" name="subjectId" th:value="${subject.id}"/>
-
-    <input type="hidden" name="date" id="selectedDate"/>
-
-    <div class="calendar">
-        <div class="cal-header">
-            <button type="button" onclick="changeMonth(-1)">&#8249;</button>
-            <span id="monthLabel"></span>
-            <button type="button" onclick="changeMonth(1)">&#8250;</button>
-        </div>
-        <div class="cal-grid" id="calGrid">
-            <div class="cal-day-name">Mon</div>
-            <div class="cal-day-name">Tue</div>
-            <div class="cal-day-name">Wed</div>
-            <div class="cal-day-name">Thu</div>
-            <div class="cal-day-name">Fri</div>
-            <div class="cal-day-name">Sat</div>
-            <div class="cal-day-name">Sun</div>
-        </div>
+<header class="dashboard-header">
+    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <div class="dashboard-header-actions">
+        <a class="btn-reservations" th:href="@{/dashboard}">← Dashboard</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-logout" type="submit">Одјава</button>
+        </form>
     </div>
+</header>
 
-    <p class="selected-date">Selected date: <strong id="dateDisplay">None</strong></p>
+<div class="dashboard-content options-content">
+    <div class="options-card">
 
-    <label>Start Time</label>
-    <input type="time" name="startTime" required/>
+        <form th:action="@{/exam/classrooms}" method="get">
+            <h2 class="options-title" th:text="${subject.name}"></h2>
+            <input type="hidden" name="subjectId" th:value="${subject.id}"/>
 
-    <label>Duration (minutes)</label>
-    <input type="number" name="duration" min="10" max="300" placeholder="e.g. 30" required/>
+            <div class="field-group">
+                <label class="field-label">Датум</label>
+                <input class="field-input" type="date" name="date" required/>
+            </div>
 
-    <label>Number of Students</label>
-    <div class="predict-row">
-    <input type="number" name="numberOfStudents" id="numberOfStudents" min="20" placeholder="e.g. 60" required/>
-    <button type="button" id="predictBtn" onclick="predictAttendance()">Predict Attendance</button>
+            <div class="field-group">
+                <label class="field-label">Почеток</label>
+                <input class="field-input" type="time" name="startTime" required/>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Траење (минути)</label>
+                <input class="field-input" type="number" name="duration" min="10" max="300" placeholder="пр. 120" required/>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">Број на запишани студенти</label>
+                <input class="field-input" type="number" id="enrolledInput" min="1" placeholder="пр. 200"/>
+            </div>
+
+            <button type="button" class="btn-predict" id="predictBtn">
+                🤖 Предвиди присуство
+            </button>
+
+            <p class="predict-result hidden" id="predictResult"></p>
+
+            <div class="field-group" style="margin-top: 16px">
+                <label class="field-label">Очекуван број на студенти</label>
+                <input class="field-input" type="number" name="numberOfStudents" id="numberOfStudents" min="1" placeholder="пр. 60" required/>
+            </div>
+
+            <button class="btn-submit" type="submit">Види слободни простории →</button>
+        </form>
     </div>
-    <div id="predictionResult"></div>
+</div>
 
-    <button type="submit" id="continueBtn" disabled>See Available Classrooms →</button>
-</form>
+<script th:inline="javascript">
+    const subjectId = /*[[${subject.id}]]*/ null;
 
-<a style="text-decoration: none" th:href="@{/dashboard}">← Back to Dashboard</a>
+    document.getElementById('predictBtn').addEventListener('click', async function () {
+        const enrolled = document.getElementById('enrolledInput').value;
 
-<script>
-    var today = new Date();
-    var current = new Date(today.getFullYear(), today.getMonth(), 1);
-    var monthNames = ["January","February","March","April","May","June",
-        "July","August","September","October","November","December"];
-
-    function renderCalendar() {
-        var grid = document.getElementById('calGrid');
-        while (grid.children.length > 7) grid.removeChild(grid.lastChild);
-
-        document.getElementById('monthLabel').textContent =
-            monthNames[current.getMonth()] + ' ' + current.getFullYear();
-
-        var firstDay = new Date(current.getFullYear(), current.getMonth(), 1);
-        var daysInMonth = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
-        var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        var startOffset = (firstDay.getDay() + 6) % 7;
-
-        for (var i = 0; i < startOffset; i++) {
-            var empty = document.createElement('div');
-            empty.className = 'cal-day empty';
-            grid.appendChild(empty);
-        }
-
-        for (var d = 1; d <= daysInMonth; d++) {
-            let cell = document.createElement('div');
-            cell.className = 'cal-day';
-            cell.textContent = d;
-            var cellDate = new Date(current.getFullYear(), current.getMonth(), d);
-
-            if (cellDate.getTime() === todayMidnight.getTime()) cell.classList.add('today');
-
-            if (cellDate < todayMidnight) {
-                cell.classList.add('disabled');
-            } else {
-                (function(date, dayNum) {
-                    cell.onclick = function() {
-                        var prev = grid.querySelector('.selected');
-                        if (prev) prev.classList.remove('selected');
-                        cell.classList.add('selected');
-
-                        var yyyy = date.getFullYear();
-                        var mm = String(date.getMonth() + 1).padStart(2, '0');
-                        var dd = String(dayNum).padStart(2, '0');
-                        var formatted = yyyy + '-' + mm + '-' + dd;
-
-                        document.getElementById('selectedDate').value = formatted;
-                        var suffix = (dayNum == 1 || dayNum == 21 || dayNum == 31) ? 'st' :
-                                     (dayNum == 2 || dayNum == 22) ? 'nd' :
-                                         (dayNum == 3 || dayNum == 23) ? 'rd' : 'th';
-                        var monthNames2 = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-                        document.getElementById('dateDisplay').textContent = dayNum + suffix + ' ' + monthNames2[date.getMonth()] + ' ' + date.getFullYear();
-                        document.getElementById('continueBtn').disabled = false;
-                    };
-                })(cellDate, d);
-            }
-            grid.appendChild(cell);
-        }
-    }
-
-    function changeMonth(dir) {
-        current.setMonth(current.getMonth() + dir);
-        renderCalendar();
-    }
-
-    renderCalendar();
-
-    var PREDICTION_API = 'http://localhost:8000/predict';
-
-    function predictAttendance() {
-        var enrolled_num_students = parseInt(document.getElementById('numberOfStudents').value, 10);
-        var predictionResult = document.getElementById('predictionResult');
-        var predictionButton = document.getElementById('predictBtn');
-
-        if (!enrolled_num_students || enrolled_num_students < 1) {
-            predictionResult.className = 'error';
-            predictionResult.style.display = 'block';
-            predictionResult.textContent = 'Invalid input. The number of students must be greater than 0.';
+        if (!enrolled || enrolled < 1) {
+            alert('Внеси број на запишани студенти прво.');
             return;
         }
 
-        var subjectId = parseInt(document.querySelector('input[name="subjectId"]').value, 10);
+        this.textContent = '⏳ Предвидувам...';
+        this.disabled = true;
 
-        predictionButton.disabled = true;
-        predictionButton.textContent = 'Predicting';
-        predictionResult.style.display = 'none';
-
-        fetch(PREDICTION_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({subject_id: subjectId, enrolled_survey: enrolled_num_students})
-        })
-            .then(function(result) {
-                if (!result.ok) throw new Error('API error: ' + result.status);
-                return result.json();
-            })
-            .then(function(data) {
-                var attendance_rate = Math.round(data.attendance_rate * 100);
-                predictionResult.className = '';
-                predictionResult.style.display = 'block';
-                predictionResult.innerHTML =
-                    'Предвиден attendance: <strong>' + data.predicted_attendance + ' студенти</strong>' + ' (' + attendance_rate + '% од пријавените)';
-            })
-            .catch(function(err) {
-                predictionResult.className = 'error';
-                predictionResult.style.display = 'block';
-                predictionResult.textContent = 'ML service error. Check if FastAPI is running on port 8000.';
-                console.error(err);
-            })
-            .finally(function() {
-                predictionButton.disabled = false;
-                predictionButton.textContent = 'Predict Attendance';
+        try {
+            const response = await fetch('http://localhost:8000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subject_id: subjectId,
+                    enrolled_survey: parseInt(enrolled)
+                })
             });
-    }
+
+            const data = await response.json();
+            const predicted = data.predicted_attendance;
+            const rate = Math.round(data.attendance_rate * 100);
+
+            document.getElementById('numberOfStudents').value = predicted;
+            const result = document.getElementById('predictResult');
+            result.textContent = `Предвидено: ${predicted} студенти (${rate}% присуство)`;
+            result.classList.remove('hidden');
+
+        } catch (e) {
+            alert('Грешка при поврзување со prediction сервисот.');
+        } finally {
+            this.textContent = '🤖 Предвиди присуство';
+            this.disabled = false;
+        }
+    });
 </script>
+
 </body>
 </html>

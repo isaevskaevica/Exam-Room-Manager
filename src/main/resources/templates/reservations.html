@@ -1,88 +1,129 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Reservations</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <title>Резервации</title>
 </head>
-
-<style>
-    body {
-        font-family: sans-serif;
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-    .card {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 16px 20px;
-        margin-bottom: 14px;
-    }
-    .card h3 { margin: 0 0 8px; }
-    .card p  { margin: 4px 0; color: #444; font-size: 14px; }
-    .actions { margin-top: 12px; display: flex; gap: 10px; }
-    a.btn {
-        padding: 6px 14px;
-        border-radius: 6px;
-        font-size: 13px;
-        text-decoration: none;
-        color: white;
-    }
-    .btn-edit   { background: #2a52be; }
-    .btn-delete { background: #c0392b; }
-    .btn-edit:hover   { background: #1e3fa0; }
-    .btn-delete:hover { background: #a62717; }
-</style>
-
 <body>
 
-<h1>All Reservations</h1>
+<header class="dashboard-header">
+    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <div class="dashboard-header-actions">
+        <a class="btn-reservations" th:href="@{/dashboard}">← Dashboard</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-logout" type="submit">Одјава</button>
+        </form>
+    </div>
+</header>
 
-<p th:if="${#lists.isEmpty(reservations)}">No reservations found.</p>
+<div class="reservations-content">
 
-<form style="padding-bottom: 15px" th:action="@{/reservations}" method="get">
-    <select style="width: 595px; height: 40px" name="subjectName">
-        <option value="">All Subjects</option>
-        <option th:each="subject : ${subjects}"
-                th:value="${subject.name}"
-                th:text="${subject.name}"
-                th:selected="${subject.name == selectedSubjectName}">
-        </option>
-    </select>
-    <input style="height: 36px" type="date" name="examDate"
-           th:value="${selectedDate != null ? selectedDate : T(java.time.LocalDate).now()}" />
-    <select style="height: 40px" name="scope">
-        <option value="mine" th:selected="${selectedScope == 'mine'}">My reservations</option>
-        <option value="all" th:selected="${selectedScope == 'all'}">All professors</option>
-    </select>
-    <button style="width: 200px; height: 40px" type="submit">Filter</button>
-</form>
+    <div class="reservations-top">
+        <h2 class="dashboard-section-title">Резервации</h2>
 
-<div th:each="reservation : ${reservations}" class="card">
-    <h3 th:text="${reservation.exam.subject.name}"></h3>
-    <p>📅 Date:
-        <strong th:text="${#temporals.day(reservation.exam.examDate)}"></strong><strong th:text="${#temporals.day(reservation.exam.examDate) == 1 || #temporals.day(reservation.exam.examDate) == 21 || #temporals.day(reservation.exam.examDate) == 31 ? 'st' :
-             (#temporals.day(reservation.exam.examDate) == 2 || #temporals.day(reservation.exam.examDate) == 22 ? 'nd' :
-             (#temporals.day(reservation.exam.examDate) == 3 || #temporals.day(reservation.exam.examDate) == 23 ? 'rd' : 'th'))}"></strong>
-        <strong th:text="${#temporals.format(reservation.exam.examDate, 'MMMM yyyy')}"></strong>
-    </p>
-    <p>🕐 Start time: <strong th:text="${reservation.exam.startTime}"></strong></p>
-    <p>⏱  Duration:<strong th:text="${reservation.exam.duration / 60 > 0 ? reservation.exam.duration / 60 + 'h ' : ''} + ${reservation.exam.duration % 60 > 0 ? reservation.exam.duration % 60 + 'min' : ''}"></strong></p>
-    <p>👥 Students: <strong th:text="${reservation.studentsAssigned + ' / ' + reservation.classroom.capacity}"></strong></p>
-    <p>🏫 Classroom: <strong th:text="${reservation.classroom.name}"></strong></p>
-    <p>👤 Reserved by: <strong th:text="${reservation.exam.subject.professor.fullName}"></strong></p>
+        <form th:action="@{/reservations}" method="get" class="filter-form">
 
-    <div class="actions">
+            <select name="subjectName" class="filter-select" onchange="this.form.submit()">
+                <option value="">Сите предмети</option>
+                <option th:each="subject : ${subjects}"
+                        th:value="${subject.name}"
+                        th:text="${subject.name}"
+                        th:selected="${subject.name == selectedSubjectName}">
+                </option>
+            </select>
 
-        <a class="btn btn-edit" th:if="${reservation.exam.subject.professor.id == loggedInProfessor.id}" th:href="@{/reservations/edit/{id}(id=${reservation.id})}">Edit</a>
+            <input class="filter-date" type="date" name="examDate"
+                   th:value="${selectedDate}"/>
 
-        <a class="btn btn-delete" th:if="${reservation.exam.subject.professor.id == loggedInProfessor.id}" th:href="@{/reservations/delete/{id}(id=${reservation.id})}">Delete</a>
+            <select name="scope" class="filter-select" onchange="this.form.submit()">
+                <option value="mine" th:selected="${selectedScope == 'mine'}">Мои резервации</option>
+                <option value="all" th:selected="${selectedScope == 'all'}">Сите професори</option>
+            </select>
 
-        <span th:if="${reservation.exam.subject.professor.id != loggedInProfessor.id}" style="font-size: 13px; color: #aaa;">Not your reservation</span>
+            <button class="btn-filter" type="submit">Филтрирај</button>
 
+        </form>
+    </div>
+
+    <div id="calendar"></div>
+
+</div>
+
+<!-- Modal за детали -->
+<div id="event-modal" class="modal hidden">
+    <div class="modal-card">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h3 id="modal-title"></h3>
+        <p><span class="modal-label">Датум: </span><span id="modal-date"></span></p>
+        <p><span class="modal-label">Почеток: </span><span id="modal-time"></span></p>
+        <p><span class="modal-label">Траење: </span><span id="modal-duration"></span></p>
+        <p><span class="modal-label">Просторија: </span><span id="modal-classroom"></span></p>
+        <p><span class="modal-label">Професор: </span><span id="modal-professor"></span></p>
+        <div id="modal-actions" class="modal-actions"></div>
     </div>
 </div>
 
-<a style="text-decoration: none" th:href="@{/dashboard}">← Back to Dashboard</a>
+<script th:inline="javascript">
+    const loggedInProfessorId = /*[[${loggedInProfessor.id}]]*/ null;
+    const selectedSubject = /*[[${selectedSubjectName ?: ''}]]*/ '';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'mk',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: ''
+            },
+            events: {
+                url: '/reservations/api',
+                extraParams: function() {
+                    return {
+                        subjectName: selectedSubject
+                    };
+                },
+                failure: function () {
+                    alert('Грешка при вчитување на резервации.');
+                }
+            },
+            eventClick: function (info) {
+                const e = info.event;
+                const p = e.extendedProps;
+
+                document.getElementById('modal-title').textContent = e.title;
+                document.getElementById('modal-date').textContent = e.startStr;
+                document.getElementById('modal-time').textContent = p.startTime;
+                document.getElementById('modal-duration').textContent = p.duration + ' мин';
+                document.getElementById('modal-classroom').textContent = p.classroom;
+                document.getElementById('modal-professor').textContent = p.professor;
+
+                const actions = document.getElementById('modal-actions');
+                if (p.professorId == loggedInProfessorId) {
+                    actions.innerHTML = `
+                        <a class="btn-edit" href="/reservations/edit/${e.id}">Измени</a>
+                        <a class="btn-delete" href="/reservations/delete/${e.id}">Избриши</a>
+                    `;
+                } else {
+                    actions.innerHTML = `<span class="not-yours">Не е ваша резервација</span>`;
+                }
+
+                document.getElementById('event-modal').classList.remove('hidden');
+            }
+        });
+
+        calendar.render();
+    });
+
+    function closeModal() {
+        document.getElementById('event-modal').classList.add('hidden');
+    }
+</script>
 
 </body>
 </html>

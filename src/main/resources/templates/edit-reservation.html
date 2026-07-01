@@ -1,57 +1,65 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edit Reservation</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Измени резервација</title>
 </head>
-<style>
-    .cancel {
-        padding: 7px 16px;
-        background: #c0392b;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        text-decoration: none;
-        font-family: Arial, sans-serif;
-    }
-</style>
 <body>
 
-<h1>Edit Reservation</h1>
-<h2 th:text="${reservation.exam.subject.name}"></h2>
+<header class="dashboard-header">
+    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <div class="dashboard-header-actions">
+        <a class="btn-reservations" th:href="@{/reservations}">← Резервации</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-logout" type="submit">Одјава</button>
+        </form>
+    </div>
+</header>
 
-<form style="display: flex; flex-direction: column; padding-bottom: 15px" th:action="@{/reservations/edit/{id}(id=${reservation.id})}" method="post">
+<div class="dashboard-content options-content">
+    <div class="options-card">
+        <h2 class="options-title" th:text="${reservation.exam.subject.name}"></h2>
 
-    <label style="padding-bottom: 10px">Start Time:
-        <input type="time" name="startTime"
-               th:value="${reservation.exam.startTime}" required/>
-    </label>
+        <form th:action="@{/reservations/edit/{id}(id=${reservation.id})}" method="post">
 
-    <label style="padding-bottom: 10px">Duration (minutes):
-        <input type="number" name="duration"
-               th:value="${reservation.exam.duration}" min="30" max="300" required/>
-    </label>
+            <div class="field-group">
+                <label class="field-label">Почеток</label>
+                <input class="field-input" type="time" name="startTime"
+                       th:value="${reservation.exam.startTime}" required/>
+            </div>
 
-    <label style="padding-bottom: 10px">Number of Students:
-        <input type="number" name="numberOfStudents"
-               th:value="${reservation.exam.numberOfStudents}" min="1" required/>
-    </label>
+            <div class="field-group">
+                <label class="field-label">Траење (минути)</label>
+                <input class="field-input" type="number" name="duration"
+                       th:value="${reservation.exam.duration}" min="30" max="300" required/>
+            </div>
 
-    <label style="padding-bottom: 10px">Classroom:
-        <select name="classroomId">
-            <option th:each="c : ${classrooms}"
-                    th:value="${c.id}"
-                    th:text="${c.name}"
-                    th:selected="${c.id == reservation.classroom.id}">
-            </option>
-        </select>
-    </label>
+            <div class="field-group">
+                <label class="field-label">Број на студенти</label>
+                <input class="field-input" type="number" name="numberOfStudents"
+                       th:value="${reservation.exam.numberOfStudents}" min="1" required/>
+            </div>
 
-    <button style="width: 200px" type="submit">Save Changes</button>
-</form>
+            <div class="field-group">
+                <label class="field-label">Просторија</label>
+                <select class="field-input" name="classroomId">
+                    <option th:each="c : ${classrooms}"
+                            th:value="${c.id}"
+                            th:text="${c.name}"
+                            th:selected="${c.id == reservation.classroom.id}">
+                    </option>
+                </select>
+            </div>
 
-<a class="cancel" th:href="@{/reservations}">Cancel</a>
+            <button class="btn-submit" type="submit">Зачувај промени</button>
+
+        </form>
+
+        <a class="btn-cancel" th:href="@{/reservations}">Откажи</a>
+
+    </div>
+</div>
 
 </body>
 </html>
