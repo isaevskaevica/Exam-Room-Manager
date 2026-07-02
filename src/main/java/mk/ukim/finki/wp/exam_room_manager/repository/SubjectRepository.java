@@ -11,6 +11,8 @@ import java.util.List;
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
     List<Subject> findAllByProfessor(Professor professor);
 
-    @Query("SELECT DISTINCT s.name FROM Subject s ORDER BY s.name")
+    @Query("SELECT DISTINCT s.name " +
+            "FROM Subject s " +
+            "ORDER BY s.name")
     List<String> findDistinctNames();
 }

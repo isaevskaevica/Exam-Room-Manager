@@ -20,7 +20,7 @@
 <div class="dashboard-content options-content">
     <div class="options-card">
 
-        <form th:action="@{/exam/classrooms}" method="get">
+        <form th:action="@{/exam/classrooms}" method="get" id="optionsForm">
             <h2 class="options-title" th:text="${subject.name}"></h2>
             <input type="hidden" name="subjectId" th:value="${subject.id}"/>
 
@@ -41,7 +41,7 @@
 
             <div class="field-group">
                 <label class="field-label">Број на пријавени студенти</label>
-                <input class="field-input" type="number" id="enrolledInput" min="1" placeholder="пр. 200"/>
+                <input class="field-input" type="number" id="enrolledInput" min="1" placeholder="пр. 200" required/>
             </div>
 
 
@@ -101,6 +101,13 @@
         } finally {
             this.textContent = 'Предвиди присуство';
             this.disabled = false;
+        }
+    });
+
+    document.getElementById('optionsForm').addEventListener('submit', function () {
+        const numberOfStudents = document.getElementById('numberOfStudents');
+        if (!parseInt(numberOfStudents.value)) {
+            numberOfStudents.value = document.getElementById('enrolledInput').value;
         }
     });
 </script>

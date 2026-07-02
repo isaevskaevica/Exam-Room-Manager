@@ -27,11 +27,6 @@ public class Reservation {
     @Column(name = "students_assigned")
     private int studentsAssigned;
 
-    public Reservation(Classroom classroom, Exam exam) {
-        this.classroom = classroom;
-        this.exam = exam;
-    }
-
     public Reservation(Classroom classroom, Exam exam, int studentsAssigned) {
         this.classroom = classroom;
         this.exam = exam;

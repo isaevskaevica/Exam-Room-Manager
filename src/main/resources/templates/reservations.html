@@ -41,9 +41,6 @@
                 <option value="all" th:selected="${selectedScope == 'all'}">Сите професори</option>
             </select>
 
-            <input class="filter-date" type="date" name="examDate"
-                   th:value="${selectedDate}"/>
-
             <button class="btn-filter" type="submit">Филтрирај</button>
 
         </form>
@@ -110,7 +107,7 @@
                 document.getElementById('modal-professor').textContent = p.professor;
 
                 const actions = document.getElementById('modal-actions');
-                if (p.professorId == loggedInProfessorId) {
+                if (p.professorId === loggedInProfessorId) {
                     actions.innerHTML = `
                         <a class="btn-edit" href="/reservations/edit/${e.id}">Измени</a>
                         <a class="btn-delete" href="/reservations/delete/${e.id}">Избриши</a>

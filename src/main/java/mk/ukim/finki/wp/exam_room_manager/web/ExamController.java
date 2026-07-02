@@ -7,7 +7,6 @@ import mk.ukim.finki.wp.exam_room_manager.model.Reservation;
 import mk.ukim.finki.wp.exam_room_manager.model.Subject;
 import mk.ukim.finki.wp.exam_room_manager.model.enums.ComputerAvailability;
 import mk.ukim.finki.wp.exam_room_manager.repository.ReservationRepository;
-import mk.ukim.finki.wp.exam_room_manager.repository.SubjectRepository;
 import mk.ukim.finki.wp.exam_room_manager.service.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;

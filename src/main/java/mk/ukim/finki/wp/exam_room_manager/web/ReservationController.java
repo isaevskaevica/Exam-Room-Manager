@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -57,12 +56,6 @@ public class ReservationController {
         else
             reservations = reservationService.findAllBySubjectName(subjectName);
 
-        if (examDate != null){
-            reservations = reservations.stream()
-                    .filter(reservation -> reservation.getExam().getExamDate().equals(examDate))
-                    .toList();
-        }
-
         if (!"all".equals(scope)){
             reservations = reservations.stream()
                     .filter(reservation -> reservation.getExam().getSubject().getProfessor().getId().equals(professor.getId()))
@@ -79,33 +72,17 @@ public class ReservationController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id,
-                         @AuthenticationPrincipal UserDetails userDetails) {
-        Professor loggedIn = professorService.findByUsername(userDetails.getUsername());
-        Reservation reservation = reservationService.findById(id);
-
-        if (!reservation.getExam().getSubject().getProfessor().getId().equals(loggedIn.getId())) {
-            return "redirect:/reservations";
-        }
-
+    public String delete(@PathVariable Long id) {
         reservationService.deleteById(id);
         return "redirect:/reservations";
     }
 
     @GetMapping("/edit/{id}")
     public String editForm(@PathVariable Long id,
-                           Model model,
-                           @AuthenticationPrincipal UserDetails userDetails) {
-        Professor loggedIn = professorService.findByUsername(userDetails.getUsername());
+                           Model model) {
         Reservation reservation = reservationService.findById(id);
-
-        if (!reservation.getExam().getSubject().getProfessor().getId().equals(loggedIn.getId())) {
-            return "redirect:/reservations";
-        }
-
         model.addAttribute("reservation", reservation);
         model.addAttribute("classrooms", classroomService.findAll());
-        model.addAttribute("loggedInProfessor", loggedIn);
         return "edit-reservation";
     }
 
@@ -118,8 +95,6 @@ public class ReservationController {
         reservationService.update(id, startTime, duration, numberOfStudents, classroomId);
         return "redirect:/reservations";
     }
-
-
 
     @GetMapping("/api")
     @ResponseBody
@@ -137,7 +112,7 @@ public class ReservationController {
             reservations = reservationService.findAllBySubjectName(subjectName);
         }
 
-        if (!"all".equals(scope)) {                                              // ДОДАДЕНО
+        if (!"all".equals(scope)) {
             reservations = reservations.stream()
                     .filter(r -> r.getExam().getSubject().getProfessor().getId().equals(professor.getId()))
                     .toList();

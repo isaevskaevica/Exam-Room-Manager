@@ -25,14 +25,14 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public boolean hasConflict(Reservation reservation) {
-        LocalDate date = reservation.getExam().getExamDate();
-        Classroom classroom = reservation.getClassroom();
-        List<Reservation> existing = reservationRepository.findAllByClassroomAndExam_ExamDate(classroom, date);
+        LocalDate existingDate = reservation.getExam().getExamDate();
+        Classroom existingClassroom = reservation.getClassroom();
+        List<Reservation> existingReservations = reservationRepository.findAllByClassroomAndExam_ExamDate(existingClassroom, existingDate);
 
         LocalTime newStart = reservation.getExam().getStartTime();
         LocalTime newEnd = newStart.plusMinutes(reservation.getExam().getDuration());
 
-        for (Reservation r : existing) {
+        for (Reservation r : existingReservations) {
             LocalTime existingStart = r.getExam().getStartTime();
             LocalTime existingEnd = existingStart.plusMinutes(r.getExam().getDuration());
 
@@ -78,7 +78,8 @@ public class ReservationServiceImpl implements ReservationService {
         existingReservation.getExam().setDuration(duration);
         existingReservation.getExam().setNumberOfStudents(numberOfStudents);
         existingReservation.setClassroom(classroomService.findById(classroomId));
-        return reservationRepository.save(existingReservation);
+        reservationRepository.save(existingReservation);
+        return existingReservation;
     }
 
     @Override
