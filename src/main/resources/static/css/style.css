@@ -579,3 +579,9 @@ body {
 .footer-links a:hover {
     color: #333;
 }
+
+.fc-daygrid-block-event {
+    margin-left: 4px;
+    margin-right: 4px;
+    text-align: center;
+}

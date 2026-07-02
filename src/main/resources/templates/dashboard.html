@@ -8,7 +8,7 @@
 <body>
 
 <header class="dashboard-header">
-    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <a href="/dashboard"><img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo"></a>
     <div class="dashboard-header-actions">
         <form th:action="@{/reservations}" method="get">
             <button class="btn-reservations" type="submit">Резервации</button>
@@ -38,9 +38,13 @@
     </div>
 </div>
 
-<footer class="dashboard-footer">
-    <p>&copy; 2026 FINKI Exam Room Manager. Веб Програмирање</p>
-</footer>
+<div style="margin-top: 300px;">
+
+    <footer class="dashboard-footer">
+        <p>&copy; 2026 FINKI Exam Room Manager. Веб Програмирање</p>
+    </footer>
+
+</div>
 
 </body>
 </html>

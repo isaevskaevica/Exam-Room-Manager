@@ -8,7 +8,7 @@
 <body>
 
 <header class="dashboard-header">
-    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <a href="/dashboard"><img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo"></a>
     <div class="dashboard-header-actions">
         <a class="btn-reservations" th:href="@{/dashboard}">← Dashboard</a>
         <form th:action="@{/logout}" method="post">
@@ -37,7 +37,7 @@
             <input type="hidden" name="duration" th:value="${duration}"/>
             <input type="hidden" name="numberOfStudents" th:value="${numberOfStudents}"/>
             <select name="computerAvailability" class="filter-select" onchange="this.form.submit()">
-                <option value="">Сите сали</option>
+                <option value="">Сите простории</option>
                 <option th:each="ca : ${computerAvailabilities}"
                         th:value="${ca}"
                         th:text="${ca}"

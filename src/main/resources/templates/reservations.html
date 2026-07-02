@@ -11,7 +11,7 @@
 <body>
 
 <header class="dashboard-header">
-    <img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo">
+    <a href="/dashboard"><img th:src="@{/images/moodle-io.png}" alt="FINKI Logo" class="dashboard-logo"></a>
     <div class="dashboard-header-actions">
         <a class="btn-reservations" th:href="@{/dashboard}">← Dashboard</a>
         <form th:action="@{/logout}" method="post">
@@ -41,8 +41,6 @@
                 <option value="all" th:selected="${selectedScope == 'all'}">Сите професори</option>
             </select>
 
-            <button class="btn-filter" type="submit">Филтрирај</button>
-
         </form>
     </div>
 
@@ -50,7 +48,6 @@
 
 </div>
 
-<!-- Modal за детали -->
 <div id="event-modal" class="modal hidden">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModal()">✕</button>
@@ -59,6 +56,7 @@
         <p><span class="modal-label">Почеток: </span><span id="modal-time"></span></p>
         <p><span class="modal-label">Траење: </span><span id="modal-duration"></span></p>
         <p><span class="modal-label">Просторија: </span><span id="modal-classroom"></span></p>
+        <p><span class="modal-label">Пополнетост: </span><span id="modal-capacity"></span></p>
         <p><span class="modal-label">Професор: </span><span id="modal-professor"></span></p>
         <div id="modal-actions" class="modal-actions"></div>
     </div>
@@ -104,10 +102,11 @@
                 document.getElementById('modal-time').textContent = p.startTime;
                 document.getElementById('modal-duration').textContent = p.duration + ' мин';
                 document.getElementById('modal-classroom').textContent = p.classroom;
+                document.getElementById('modal-capacity').textContent = `${p.assigned}/${p.capacity}`;
                 document.getElementById('modal-professor').textContent = p.professor;
 
                 const actions = document.getElementById('modal-actions');
-                if (p.professorId === loggedInProfessorId) {
+                if (p.professorId == loggedInProfessorId) {
                     actions.innerHTML = `
                         <a class="btn-edit" href="/reservations/edit/${e.id}">Измени</a>
                         <a class="btn-delete" href="/reservations/delete/${e.id}">Избриши</a>

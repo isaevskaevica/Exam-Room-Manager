@@ -127,6 +127,8 @@ public class ReservationController {
                     "classroom", r.getClassroom().getName(),
                     "startTime", r.getExam().getStartTime().toString(),
                     "duration", r.getExam().getDuration(),
+                    "capacity", r.getClassroom().getCapacity(),
+                    "assigned", r.getStudentsAssigned(),
                     "professor", r.getExam().getSubject().getProfessor().getFullName(),
                     "professorId", r.getExam().getSubject().getProfessor().getId()
             ));
